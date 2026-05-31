@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ABPInstanceSpecification",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "enum": ["abp.io/v1alpha1", "abp.io/v1.0"]
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["AgentInstance"]
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "instance_id", "tenant_id", "checksum"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9_-]+$" },
+        "instance_id": { "type": "string" },
+        "tenant_id": { "type": "string" },
+        "checksum": { "type": "string", "description": "Artifact bundle security hash verification code" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": ["security", "state_storage", "runtime", "compute_base"],
+      "properties": {
+        "security": {
+          "type": "object",
+          "required": ["spiffe_id", "network_egress_policy"],
+          "properties": {
+            "spiffe_id": { "type": "string", "format": "uri", "pattern": "^spiffe://.+$" },
+            "tls_secret_ref": { "type": "string" },
+            "network_egress_policy": { "type": "string" }
+          }
+        },
+        "state_storage": {
+          "type": "object",
+          "required": ["provider", "config"],
+          "properties": {
+            "provider": { "type": "string", "pattern": "^infra/[a-z0-9_-]+$" },
+            "config": {
+              "type": "object",
+              "required": ["connection_string", "sync_strategy"],
+              "properties": {
+                "connection_string": { "type": "string", "format": "uri" },
+                "db_index": { "type": "integer" },
+                "sync_strategy": { "type": "string", "enum": ["write-through", "write-back", "local-only"] },
+                "session_ttl_seconds": { "type": "integer", "minimum": 60 }
+              }
+            }
+          }
+        },
+        "runtime": {
+          "type": "object",
+          "required": ["harness_kernel", "kernel_version"],
+          "properties": {
+            "harness_kernel": { "type": "string" },
+            "kernel_version": { "type": "string" },
+            "max_concurrent_sessions": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "compute_base": {
+          "type": "object",
+          "required": ["llm_provider", "model_name"],
+          "properties": {
+            "llm_provider": { "type": "string" },
+            "endpoint_url": { "type": "string", "format": "uri" },
+            "model_name": { "type": "string" },
+            "max_tokens": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    }
+  }
+}

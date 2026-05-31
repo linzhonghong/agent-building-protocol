@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ABPTopologyGraphSpecification",
+  "type": "object",
+  "required": ["abp_version", "graph_id", "start_node", "global_state_schema", "nodes", "edges"],
+  "properties": {
+    "abp_version": {
+      "type": "string",
+      "enum": ["v1alpha1", "v1.0"]
+    },
+    "graph_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "start_node": {
+      "type": "string"
+    },
+    "global_state_schema": {
+      "type": "object",
+      "description": "Strongly typed blackboard state constraint Schema root cohesion",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["string", "int", "number", "boolean", "object"]
+      }
+    },
+    "global_scope": {
+      "type": "object",
+      "properties": {
+        "inherited_components": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ComponentConfig" }
+        }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["TransformNode", "SubGraphNode", "InputNode", "RouterNode", "EndNode"]
+          },
+          "description": { "type": "string" },
+          "sub_graph_ref": { "type": "string" },
+          "scope_control": {
+            "type": "object",
+            "properties": {
+              "memory_mode": { "type": "string", "enum": ["Shared", "Isolated", "Hierarchical"] },
+              "state_mapping": {
+                "type": "object",
+                "required": ["input", "output"]
+              }
+            }
+          },
+          "component_pipeline": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/ComponentConfig" }
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "condition": { "type": "string" },
+          "value": { "type": "string" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ComponentConfig": {
+      "type": "object",
+      "required": ["provider", "phase", "config"],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "pattern": "^abp:component:[a-z_]+:[a-z_-]+$"
+        },
+        "phase": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "config": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}
