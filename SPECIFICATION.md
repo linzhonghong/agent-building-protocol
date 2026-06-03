@@ -101,7 +101,7 @@ When developing microkernel engines, the downstream data plane must solidify the
 
 ## 6. Annex: Capability Contracts for 30 Pluggable Atomic Components Across Five Functional Grids
 
-Any data plane (Harness) or control plane (Editor) compatible with the ABP v2.1 specification must ensure that mounted atomic components conform to their declared **URN identifiers, mandatory runtime phases, capability boundaries, and input/output (I/O) expectations**.
+Any data plane (Harness) or control plane (Editor) compatible with the ABP v1.0 specification must ensure that mounted atomic components conform to their declared **URN identifiers, mandatory runtime phases, capability boundaries, and input/output (I/O) expectations**.
 
 ### 6.1 Memory & Context Grid
 
